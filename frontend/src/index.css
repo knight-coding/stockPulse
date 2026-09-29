@@ -1,0 +1,190 @@
+@import "tailwindcss";
+
+/* ==========================
+        LIGHT THEME
+========================== */
+
+:root {
+  /* Backgrounds */
+  --background: 241 243 247;   /* #F1F3F7 - thoda warm, pure white nahi */
+  --surface: 250 251 253;      /* #FAFBFD - off-white, stark white ka glare nahi */
+
+  /* Text */
+  --foreground: 30 35 45;          /* #1E232D - pure black jaisa harsh nahi, phir bhi crisp */
+  --foreground-secondary: 105 114 128;
+
+  /* Brand */
+  --primary: 88 80 236;            /* #5850EC - thoda soft indigo */
+  --primary-hover: 74 66 209;      /* #4A42D1 */
+  --primary-foreground: 255 255 255;
+
+  /* Status */
+  --success: 34 139 78;            /* desaturated green */
+  --warning: 194 120 15;           /* muted amber, neon nahi */
+  --error: 200 62 62;              /* softened red, saturation kam */
+  --info: 30 130 176;              /* desaturated teal-blue, harsh cyan nahi */
+
+  /* Finance */
+  --profit: 34 139 78;
+  --loss: 200 62 62;
+  --buy: 61 100 217;
+  --sell: 201 106 41;
+
+  /* UI */
+  --border: 222 226 232;
+  --input: 247 248 250;
+  --hover: 233 236 241;
+
+  --muted: 237 239 243;
+  --muted-foreground: 111 119 133;
+
+  --ring: 108 100 230;
+}
+
+/* ==========================
+        DARK THEME
+========================== */
+
+.dark {
+  /* Backgrounds */
+  --background: 13 16 23;          /* #0D1017 - deeper, near-black w/ blue cast */
+  --surface: 22 27 37;             /* #161B25 - clear step up from bg for card pop */
+
+  /* Text */
+  --foreground: 237 240 246;
+  --foreground-secondary: 148 160 180;
+
+  /* Brand */
+  --primary: 99 102 241;           /* #6366F1 - vivid indigo, pairs with light theme */
+  --primary-hover: 129 140 248;    /* #818CF8 */
+  --primary-foreground: 255 255 255;
+
+  /* Status */
+  --success: 52 211 153;
+  --warning: 250 204 21;
+  --error: 251 113 133;
+  --info: 56 189 248;
+
+  /* Finance */
+  --profit: 52 211 153;
+  --loss: 251 113 133;
+  --buy: 96 165 250;
+  --sell: 251 146 60;
+
+  /* UI */
+  --border: 40 47 61;
+  --input: 27 32 42;
+  --hover: 34 40 52;
+
+  /* Misc */
+  --ring: 129 140 248;
+  --muted: 22 27 37;
+  --muted-foreground: 148 160 180;
+}
+
+@theme inline {
+  --color-background: rgb(var(--background));
+  --color-card: rgb(var(--surface));
+
+  --color-foreground: rgb(var(--foreground));
+  --color-foreground-secondary: rgb(var(--foreground-secondary));
+
+  --color-primary: rgb(var(--primary));
+  --color-primary-hover: rgb(var(--primary-hover));
+  --color-primary-foreground: rgb(var(--primary-foreground));
+
+  --color-border: rgb(var(--border));
+  --color-hover: rgb(var(--hover));
+  --color-input: rgb(var(--input));
+
+  --color-profit: rgb(var(--profit));
+  --color-loss: rgb(var(--loss));
+
+  --color-success: rgb(var(--success));
+  --color-warning: rgb(var(--warning));
+  --color-error: rgb(var(--error));
+  --color-info: rgb(var(--info));
+}
+
+/* ==========================
+   ANIMATED BACKGROUND
+   "Market Pulse Mesh" — lightweight version.
+   Only transform/opacity are animated (GPU compositor only),
+   so it stays smooth regardless of screen size.
+========================== */
+
+.bg-mesh {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+}
+
+.bg-mesh::before,
+.bg-mesh::after {
+  content: "";
+  position: absolute;
+  inset: -20%;              /* oversized so transform never reveals edges */
+  z-index: 0;
+  pointer-events: none;
+  will-change: transform;
+}
+
+/* light mode gets its own much subtler treatment */
+.bg-mesh::before {
+  background:
+    radial-gradient(circle at 20% 25%, rgb(var(--primary) / 0.30) 0%, transparent 30%),
+    radial-gradient(circle at 80% 70%, rgb(var(--info) / 0.26) 0%, transparent 28%),
+    radial-gradient(circle at 65% 20%, rgb(var(--profit) / 0.14) 0%, transparent 22%),
+    radial-gradient(circle at 30% 80%, rgb(var(--loss) / 0.12) 0%, transparent 20%);
+  filter: blur(50px);
+  animation: meshDrift 30s ease-in-out infinite alternate;
+  transform: translateZ(0);
+}
+
+/* override for light mode — fewer colors, far lower opacity, bigger blur */
+:root:not(.dark) .bg-mesh::before {
+  background:
+    radial-gradient(circle at 20% 20%, rgb(var(--primary) / 0.07) 0%, transparent 40%),
+    radial-gradient(circle at 80% 75%, rgb(var(--info) / 0.05) 0%, transparent 38%);
+  filter: blur(90px);
+  opacity: 0.9;
+}
+
+.dark .bg-mesh::before {
+  opacity: 0.8;
+}
+
+/* static grid, cheap opacity-only breathing, no sweep */
+.bg-mesh::after {
+  inset: 0;
+  z-index: 1;
+  background-image:
+    linear-gradient(to right, rgb(var(--border) / 0.5) 1px, transparent 1px),
+    linear-gradient(to bottom, rgb(var(--border) / 0.5) 1px, transparent 1px);
+  background-size: 48px 48px;
+  mask-image: radial-gradient(ellipse at center, black 30%, transparent 78%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 78%);
+  animation: gridBreathe 8s ease-in-out infinite;
+}
+
+.bg-mesh > * {
+  position: relative;
+  z-index: 2;
+}
+
+@keyframes meshDrift {
+  0%   { transform: translate3d(0, 0, 0) scale(1); }
+  100% { transform: translate3d(3%, -2%, 0) scale(1.06); }
+}
+
+@keyframes gridBreathe {
+  0%, 100% { opacity: 0.5; }
+  50%      { opacity: 0.85; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .bg-mesh::before,
+  .bg-mesh::after {
+    animation: none !important;
+  }
+}

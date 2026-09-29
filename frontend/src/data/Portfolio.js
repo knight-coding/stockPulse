@@ -1,0 +1,32 @@
+export const portfolios = [
+    {
+        id: "1",
+        name: "Manan",
+        description: "Long Term Investments",
+        broker: "Upstox",
+        holdingsCount: 12,
+        invested: 425000,
+        currentValue: 468500,
+        createdAt: "2026-07-10",
+    },
+    {
+        id: "2",
+        name: "Dad",
+        description: "Retirement Portfolio",
+        broker: "Groww",
+        holdingsCount: 8,
+        invested: 310000,
+        currentValue: 334250,
+        createdAt: "2026-06-18",
+    },
+    {
+        id: "3",
+        name: "Swing",
+        description: "Short Term Trades",
+        broker: "Zerodha",
+        holdingsCount: 15,
+        invested: 215000,
+        currentValue: 208600,
+        createdAt: "2026-08-01",
+    },
+];
