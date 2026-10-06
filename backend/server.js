@@ -7,6 +7,7 @@ import cookieParser from "cookie-parser";
 import router from './routes/index.js';
 import { corsOptions } from './config/corsOptions.js';
 import "./workers/stockPrice.worker.js";
+import scheduleStockPriceUpdate from "./schedulers/stockPrice.scheduler.js";
 
 import dns from "node:dns/promises";
 dns.setServers(["1.1.1.1"]);
@@ -21,6 +22,7 @@ app.use(cookieParser());
 app.use(cors(corsOptions));
 
 await connectDB();
+await scheduleStockPriceUpdate();
 
 app.use("/api", router);
 

@@ -101,6 +101,10 @@ const stockPriceWorker = new Worker(
             host: "localhost",
             port: 6379,
         },
+
+        // Process one batch at a time.
+        // This keeps BharatStocks API requests sequential.
+        concurrency: 1,
     }
 );
 
