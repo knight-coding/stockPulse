@@ -1,67 +1,96 @@
-import { motion } from "framer-motion";
 import Card from "./Card";
 
 export default function StatCard({
     title,
     value,
     change,
+    subtitle,
     icon,
-    positive = true,
+    positive,
+    className = "",
 }) {
     return (
-        <motion.div
-            initial={{ opacity: 0, y: 25 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.4 }}
-            whileHover={{
-                y: -6,
-                transition: { duration: 0.2 },
-            }}
-        >
-            <Card className="cursor-pointer">
+        <Card className={`p-5 ${className}`}>
 
-                <div className="flex items-start justify-between">
+            <div className="flex items-start justify-between">
 
-                    <div className="space-y-2">
+                <div className="min-w-0">
 
-                        <p className="text-sm font-medium text-foreground-secondary">
-                            {title}
-                        </p>
+                    <p className="text-sm font-medium text-foreground-secondary">
+                        {title}
+                    </p>
 
-                        <h2 className="text-3xl font-bold text-foreground">
-                            {value}
-                        </h2>
+                    <h2
+                        className={`
+                            mt-2
+                            text-2xl
+                            font-bold
+                            tracking-tight
+                            ${
+                                positive === true
+                                    ? "text-success"
+                                    : positive === false
+                                        ? "text-error"
+                                        : "text-foreground"
+                            }
+                        `}
+                    >
+                        {value}
+                    </h2>
 
+                    {change && (
                         <span
-                            className={`inline-flex items-center rounded-full px-3 py-1 text-xs font-semibold ${
-                                positive
-                                    ? "bg-success/15 text-success"
-                                    : "bg-error/15 text-error"
-                            }`}
+                            className={`
+                                mt-2
+                                inline-flex
+                                items-center
+                                rounded-lg
+                                px-2.5
+                                py-1
+                                text-xs
+                                font-semibold
+                                ${
+                                    positive === true
+                                        ? "bg-success/15 text-success"
+                                        : positive === false
+                                            ? "bg-error/15 text-error"
+                                            : "bg-foreground/10 text-foreground-secondary"
+                                }
+                            `}
                         >
                             {change}
                         </span>
+                    )}
 
-                    </div>
+                    {subtitle && (
+                        <p className="mt-2 text-xs text-foreground-secondary">
+                            {subtitle}
+                        </p>
+                    )}
 
+                </div>
+
+                {icon && (
                     <div
                         className="
+                            ml-4
                             flex
-                            h-14
-                            w-14
+                            h-10
+                            w-10
+                            shrink-0
                             items-center
                             justify-center
-                            rounded-2xl
+                            rounded-xl
                             bg-primary/10
                             text-primary
                         "
                     >
                         {icon}
                     </div>
+                )}
 
-                </div>
+            </div>
 
-            </Card>
-        </motion.div>
+        </Card>
     );
 }

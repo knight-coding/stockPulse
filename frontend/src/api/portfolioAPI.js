@@ -16,6 +16,20 @@ export const deletePortfolioById = (portfolioId) => {
     return api.delete(`/portfolio/${portfolioId}`);
 };
 
+export const getPortfolioDashboard = (filters = {}) => {
+    const params = {};
+
+    if (filters.portfolioId && filters.portfolioId !== "all") {
+        params.portfolioId = filters.portfolioId;
+    }
+
+    if (filters.symbol && filters.symbol !== "all") {
+        params.symbol = filters.symbol;
+    }
+
+    return api.get("/portfolio/dashboard", { params });
+};
+
 export const addHolding = (portfolioId, holdingData) => {
     return api.post(
         `/portfolio/holdings/${portfolioId}`,
