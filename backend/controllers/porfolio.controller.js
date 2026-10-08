@@ -1,5 +1,6 @@
 import Portfolio from "../models/Portfolio.model.js";
 import User from "../models/User.model.js"
+import { getPortfolioDashboard } from "../services/portfolioDashboard.service.js";
 
 export const createPortfolio = async (req, res) => {
     try {
@@ -134,3 +135,31 @@ export const getPortfolioById = async (req, res) => {
         res.status(501).json({message: "Error fetching porfolio with id"});
     }
 }
+
+export const getPortfolioDashboardController = async (req, res) => {
+    try {
+        const userId = req.user.id;
+
+        const { portfolioId, symbol } = req.query;
+
+        const dashboard = await getPortfolioDashboard(userId, {
+            portfolioId,
+            symbol
+        });
+
+        return res.status(200).json({
+            message: "Portfolio dashboard fetched successfully.",
+            data: dashboard
+        });
+
+    } catch (error) {
+        console.error(
+            "Error fetching portfolio dashboard:",
+            error.message
+        );
+
+        return res.status(500).json({
+            message: "Internal server error."
+        });
+    }
+};
