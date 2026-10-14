@@ -57,6 +57,18 @@ const generateRefreshToken = (user) => {
     );
 };
 
+const isProduction = process.env.NODE_ENV === "production";
+
+const getCookieOptions = () => ({
+  httpOnly: true,
+  sameSite: isProduction ? "None" : "Lax",
+  secure: isProduction,
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+  path: "/",
+});
+
+const EMAIL_VERIFICATION_ENABLED = process.env.ENABLE_EMAIL_VERIFICATION === "true";
+
 /* ========================================================= */
 /* ===================== REGISTER =========================== */
 /* ========================================================= */
@@ -72,9 +84,6 @@ export const registerUser = async (req, res) => {
                 message: "All fields are required.",
             });
         }
-
-        const EMAIL_VERIFICATION_ENABLED =
-            process.env.ENABLE_EMAIL_VERIFICATION === "true";
 
         let existingUser = await User.findOne({
             $or: [{ email }, { username }],
@@ -127,12 +136,7 @@ export const registerUser = async (req, res) => {
             existingUser.refreshToken = refreshToken;
             await existingUser.save();
 
-            res.cookie("refreshToken", refreshToken, {
-                httpOnly: true,
-                sameSite: "None",
-                secure: false,
-                maxAge: 7 * 24 * 60 * 60 * 1000,
-            });
+            res.cookie("refreshToken", refreshToken, getCookieOptions());
 
             return res.status(200).json({
                 success: true,
@@ -170,12 +174,7 @@ export const registerUser = async (req, res) => {
         user.refreshToken = refreshToken;
         await user.save();
 
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            sameSite: "lax",
-            secure: true,
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        res.cookie("refreshToken", refreshToken, getCookieOptions());
 
         return res.status(201).json({
             success: true,
@@ -262,12 +261,7 @@ export const verifySignupOTP = async (req, res) => {
 
         await user.save();
 
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            sameSite: "lax",
-            secure: true, // change to true in production with HTTPS
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        res.cookie("refreshToken", refreshToken, getCookieOptions());
 
         return res.status(200).json({
             success: true,
@@ -343,38 +337,18 @@ export const resendSignupOTP = async (req, res) => {
 
 export const refreshAccessToken = async (req, res) => {
     try {
-
         const refreshToken = req.cookies?.refreshToken;
+        if (!refreshToken) return res.sendStatus(401);
 
-        if (!refreshToken) {
-            return res.sendStatus(401);
-        }
-    
-        jwt.verify(
-            refreshToken,
-            process.env.REFRESH_TOKEN_SECRET,
-            async (err, decoded) => {
-                if (err) return res.sendStatus(403);
-    
-                const user = await User.findById(decoded.id);
-    
-                if (!user) return res.sendStatus(401);
-    
-                if (user.refreshToken !== refreshToken) {
-                    return res.sendStatus(403);
-                }
-    
-                const accessToken = generateAccessToken(user);
-    
-                return res.status(200).json({
-                    accessToken,
-                });
-            }
-        );
-        
+        jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET, async (err, decoded) => {
+            if (err) return res.sendStatus(403);
+            const user = await User.findById(decoded.id);
+            if (!user || user.refreshToken !== refreshToken) return res.sendStatus(403);
+            const accessToken = generateAccessToken(user);
+            return res.status(200).json({ accessToken });
+        });
     } catch (error) {
-        console.log(error.message);
-        res.status(500).json({message: "Unable to create new accessToken"});
+        return res.status(403).json({ message: "Unable to create new accessToken" });
     }
 };
 
@@ -433,12 +407,7 @@ export const handleLogin = async (req, res) => {
 
         await user.save();
 
-        res.cookie("refreshToken", refreshToken, {
-            httpOnly: true,
-            sameSite: "lax",
-            secure: false,
-            maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        res.cookie("refreshToken", refreshToken, getCookieOptions());
 
         return res.status(200).json({
             success: true,
@@ -528,20 +497,16 @@ export const forgotPassword = async (req, res) => {
 
 export const handleLogout = async (req, res) => {
     try {
-        res.clearCookie("refreshToken", {
-            httpOnly: true,
-            sameSite: "lax",
-            secure: false,
-        });
-
-        return res.status(200).json({
-            success: true,
-            message: "Logged out successfully.",
-        });
+        const refreshToken = req.cookies?.refreshToken;
+        if (refreshToken) {
+            try {
+                const decoded = jwt.verify(refreshToken, process.env.REFRESH_TOKEN_SECRET);
+                await User.findByIdAndUpdate(decoded.id, { refreshToken: null });
+            } catch {}
+        }
+        res.clearCookie("refreshToken", getCookieOptions());
+        return res.status(200).json({ success: true, message: "Logged out successfully." });
     } catch (err) {
-        return res.status(500).json({
-            success: false,
-            message: err.message,
-        });
+        return res.status(500).json({ success: false, message: err.message });
     }
 };
