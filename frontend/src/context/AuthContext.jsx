@@ -10,18 +10,21 @@ export function AuthProvider({ children }) {
 
     const loadUser = useCallback(async () => {
         const token = localStorage.getItem("accessToken");
-
         if (!token) {
             setIsLoading(false);
             return;
         }
-
         try {
+            // api interceptor khud Authorization laga dega
             const { data } = await getCurrentUser();
-
-            setUser(data.user);
+            setUser(data.user || data);
         } catch (err) {
-            localStorage.removeItem("accessToken");
+            // agar getCurrentUser 401 dega toh axios interceptor khud refresh try karega
+            // yahan sirf tab aayega jab refresh bhi fail ho
+            if (err.response?.status !== 401) {
+                console.log(err);
+            }
+            // 401 wala case interceptor handle kar lega
             setUser(null);
         } finally {
             setIsLoading(false);

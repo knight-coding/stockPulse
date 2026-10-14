@@ -238,14 +238,14 @@ export default function Portfolio() {
                             options={portfolioOptions}
                             value={selectedPortfolio}
                             onChange={(e) => setSelectedPortfolio(e.target.value)}
-                            className="w-auto max-w-[130px] py-1 text-xs sm:max-w-[170px] sm:text-sm"
+                            className="w-auto max-w-32.5 py-1 text-xs sm:max-w-42.5 sm:text-sm"
                         />
 
                         <Select
                             options={symbolOptions}
                             value={selectedSymbol}
                             onChange={(e) => setSelectedSymbol(e.target.value)}
-                            className="w-auto max-w-[110px] py-1 text-xs sm:max-w-[150px] sm:text-sm"
+                            className="w-auto max-w-27.5 py-1 text-xs sm:max-w-37.5 sm:text-sm"
                         />
                     </div>
                 </div>

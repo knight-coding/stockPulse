@@ -12,13 +12,15 @@ import Signup from "./pages/auth/Signup";
 import VerifyOTP from "./pages/auth/VerifyOTP";
 import PublicRoute from "./routes/PublicRoute";
 import ProtectedRoute from "./routes/PrivateRoute";
+import Home from "./pages/Home";
 
 function App() {
     return (
         <Routes>
             {/* Routes with Header & Footer */}
             <Route element={<Layout />}>
-                <Route index element={<Dashboard />} />
+                <Route index element={<Home />} />
+                {/* <Route index element={<Dashboard />} /> */}
 
                 {/* Public Routes */}
                 <Route element={<PublicRoute />}>

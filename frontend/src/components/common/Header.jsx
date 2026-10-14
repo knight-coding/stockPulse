@@ -10,7 +10,7 @@ export default function Header() {
     const { isAuthenticated, logout } = useAuth();
 
     const navLinks = [
-        { name: "Dashboard", path: "/" },
+        { name: "Home", path: "/" },
         { name: "Portfolio", path: "/portfolio" },
         { name: "Watchlist", path: "/watchlist" },
         { name: "Manage", path: "/manage" },

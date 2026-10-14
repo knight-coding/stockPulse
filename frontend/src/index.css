@@ -107,84 +107,29 @@
 }
 
 /* ==========================
-   ANIMATED BACKGROUND
-   "Market Pulse Mesh" — lightweight version.
-   Only transform/opacity are animated (GPU compositor only),
-   so it stays smooth regardless of screen size.
+   LIGHT MODE - CLEAN & SOFT
+   Replace your :root:not(.dark) blocks with this
 ========================== */
 
-.bg-mesh {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
+:root:not(.dark) .bg-mesh {
+  background: #fcfcfd; /* pure white se thoda soft, aankh ko chubhega nahi */
 }
 
-.bg-mesh::before,
-.bg-mesh::after {
-  content: "";
-  position: absolute;
-  inset: -20%;              /* oversized so transform never reveals edges */
-  z-index: 0;
-  pointer-events: none;
-  will-change: transform;
-}
-
-/* light mode gets its own much subtler treatment */
-.bg-mesh::before {
-  background:
-    radial-gradient(circle at 20% 25%, rgb(var(--primary) / 0.30) 0%, transparent 30%),
-    radial-gradient(circle at 80% 70%, rgb(var(--info) / 0.26) 0%, transparent 28%),
-    radial-gradient(circle at 65% 20%, rgb(var(--profit) / 0.14) 0%, transparent 22%),
-    radial-gradient(circle at 30% 80%, rgb(var(--loss) / 0.12) 0%, transparent 20%);
-  filter: blur(50px);
-  animation: meshDrift 30s ease-in-out infinite alternate;
-  transform: translateZ(0);
-}
-
-/* override for light mode — fewer colors, far lower opacity, bigger blur */
 :root:not(.dark) .bg-mesh::before {
   background:
-    radial-gradient(circle at 20% 20%, rgb(var(--primary) / 0.07) 0%, transparent 40%),
-    radial-gradient(circle at 80% 75%, rgb(var(--info) / 0.05) 0%, transparent 38%);
-  filter: blur(90px);
-  opacity: 0.9;
+    radial-gradient(800px circle at 10% -10%, rgba(88, 80, 236, 0.06), transparent 50%),
+    radial-gradient(700px circle at 90% 110%, rgba(30, 130, 176, 0.05), transparent 50%);
+  filter: blur(70px);
+  opacity: 1;
+  animation: none; /* light me animation hata di, static hi clean lagta hai */
 }
 
-.dark .bg-mesh::before {
-  opacity: 0.8;
-}
-
-/* static grid, cheap opacity-only breathing, no sweep */
-.bg-mesh::after {
-  inset: 0;
-  z-index: 1;
-  background-image:
-    linear-gradient(to right, rgb(var(--border) / 0.5) 1px, transparent 1px),
-    linear-gradient(to bottom, rgb(var(--border) / 0.5) 1px, transparent 1px);
-  background-size: 48px 48px;
-  mask-image: radial-gradient(ellipse at center, black 30%, transparent 78%);
-  -webkit-mask-image: radial-gradient(ellipse at center, black 30%, transparent 78%);
-  animation: gridBreathe 8s ease-in-out infinite;
-}
-
-.bg-mesh > * {
-  position: relative;
-  z-index: 2;
-}
-
-@keyframes meshDrift {
-  0%   { transform: translate3d(0, 0, 0) scale(1); }
-  100% { transform: translate3d(3%, -2%, 0) scale(1.06); }
-}
-
-@keyframes gridBreathe {
-  0%, 100% { opacity: 0.5; }
-  50%      { opacity: 0.85; }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .bg-mesh::before,
-  .bg-mesh::after {
-    animation: none !important;
-  }
+:root:not(.dark) .bg-mesh::after {
+  background-image: 
+    linear-gradient(to right, rgba(0,0,0,0.04) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(0,0,0,0.04) 1px, transparent 1px);
+  background-size: 56px 56px;
+  opacity: 0.3;
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 75%);
+  animation: none;
 }

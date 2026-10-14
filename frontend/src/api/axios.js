@@ -91,10 +91,7 @@ api.interceptors.response.use(
             } catch (refreshError) {
                 processQueue(refreshError);
                 // alert("Please Login First");
-
                 localStorage.removeItem("accessToken");
-
-                window.location.replace("/login");
 
                 return Promise.reject(refreshError);
             } finally {
